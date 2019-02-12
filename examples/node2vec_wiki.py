@@ -2,7 +2,7 @@
 import numpy as np
 
 from ge.classify import read_node_label, Classifier
-from ge import LINE
+from ge import Node2Vec
 from sklearn.linear_model import LogisticRegression
 
 import matplotlib.pyplot as plt
@@ -36,18 +36,19 @@ def plot_embeddings(embeddings,):
         color_idx[Y[i][0]].append(i)
 
     for c, idx in color_idx.items():
-        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
+        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c))
     plt.legend()
     plt.show()
 
 
 if __name__ == "__main__":
-    G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
-                         create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
+    G=nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
+                         create_using = nx.DiGraph(), nodetype = None, data = [('weight', int)])
 
-    model = LINE(G, embedding_size=128, order='second')
-    model.train(batch_size=1024, epochs=50, verbose=2)
-    embeddings = model.get_embeddings()
+    model=Node2Vec(G, walk_length = 10, num_walks = 80,
+                   p = 0.25, q = 4, workers = 1)
+    model.train(window_size = 5, iter = 3)
+    embeddings=model.get_embeddings()
 
     evaluate_embeddings(embeddings)
     plot_embeddings(embeddings)

@@ -1,11 +1,13 @@
+
+import numpy as np
+
+from ge.classify import read_node_label, Classifier
+from ge import DeepWalk
+from sklearn.linear_model import LogisticRegression
+
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
-from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import TSNE
-
-from ge import DeepWalk
-from ge.classify import Classifier, read_node_label
 
 
 def evaluate_embeddings(embeddings):
@@ -34,8 +36,7 @@ def plot_embeddings(embeddings,):
         color_idx[Y[i][0]].append(i)
 
     for c, idx in color_idx.items():
-        plt.scatter(node_pos[idx, 0], node_pos[idx, 1],
-                    label=c)  # c=node_colors)
+        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
     plt.legend()
     plt.show()
 

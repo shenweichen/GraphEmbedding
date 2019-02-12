@@ -2,7 +2,7 @@ from __future__ import print_function
 
 
 import numpy
-from sklearn.metrics import f1_score,accuracy_score
+from sklearn.metrics import f1_score, accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 
@@ -37,7 +37,7 @@ class Classifier(object):
         top_k_list = [len(l) for l in Y]
         Y_ = self.predict(X, top_k_list)
         Y = self.binarizer.transform(Y)
-        averages = ["micro", "macro","samples", "weighted" ]#
+        averages = ["micro", "macro", "samples", "weighted"]
         results = {}
         for average in averages:
             results[average] = f1_score(Y, Y_, average=average)
@@ -66,6 +66,7 @@ class Classifier(object):
         self.train(X_train, Y_train, Y)
         numpy.random.set_state(state)
         return self.evaluate(X_test, Y_test)
+
 
 def read_node_label(filename, skip_head=False):
     fin = open(filename, 'r')

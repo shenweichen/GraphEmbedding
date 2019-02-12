@@ -3,10 +3,12 @@
 # Method
 
 
-|  Model   | Paper                                                                                                                    | Note                                                                                       |
-| :------: | :----------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
-| DeepWalk | [KDD 2014][DeepWalk: Online Learning of Social Representations](http://www.perozzi.net/publications/14_kdd_deepwalk.pdf) | [【Graph Embedding】DeepWalk：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56380812) |
-|   LINE   | [WWW 2015][LINE: Large-scale Information Network Embedding](https://arxiv.org/pdf/1503.03578.pdf)                        | [【Graph Embedding】LINE：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56478167)     |
+|  Model   | Paper                                                                                                                      | Note                                                                                       |
+| :------: | :------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| DeepWalk | [KDD 2014][DeepWalk: Online Learning of Social Representations](http://www.perozzi.net/publications/14_kdd_deepwalk.pdf)   | [【Graph Embedding】DeepWalk：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56380812) |
+|   LINE   | [WWW 2015][LINE: Large-scale Information Network Embedding](https://arxiv.org/pdf/1503.03578.pdf)                          | [【Graph Embedding】LINE：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56478167)     |
+| Node2Vec | [KDD 2016][node2vec: Scalable Feature Learning for Networks](https://www.kdd.org/kdd2016/papers/files/rfp0218-groverA.pdf) | [【Graph Embedding】Node2Vec：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56542707) |
+
 # How to run examples
 1. clone the repo and make sure you have installed `tensorflow` or `tensorflow-gpu` on your local machine. 
 2. run following commands
@@ -40,5 +42,14 @@ G = nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',create_using=nx.DiGraph(),
 
 model = LINE(G,embedding_size=128,order='second') #init model,order can be ['first','second','all']
 model.train(batch_size=1024,epochs=50,verbose=2)# train model
+embeddings = model.get_embeddings()# get embedding vectors
+```
+## Node2Vec
+```python
+G=nx.read_edgelist('../data/wiki/Wiki_edgelist.txt',
+                        create_using = nx.DiGraph(), nodetype = None, data = [('weight', int)])#read graph
+
+model = Node2Vec(G, walk_length = 10, num_walks = 80,p = 0.25, q = 4, workers = 1)#init model
+model.train(window_size = 5, iter = 3)# train model
 embeddings = model.get_embeddings()# get embedding vectors
 ```
