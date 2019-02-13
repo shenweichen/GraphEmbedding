@@ -1,3 +1,22 @@
+# -*- coding:utf-8 -*-
+
+"""
+
+
+
+Author:
+
+    Weichen Shen,wcshen1994@163.com
+
+
+
+Reference:
+
+    [1] Perozzi B, Al-Rfou R, Skiena S. Deepwalk: Online learning of social representations[C]//Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining. ACM, 2014: 701-710.(http://www.perozzi.net/publications/14_kdd_deepwalk.pdf)
+
+
+
+"""
 from ..walker import RandomWalker
 from gensim.models import Word2Vec
 import pandas as pd

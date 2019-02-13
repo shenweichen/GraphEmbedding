@@ -1,3 +1,23 @@
+# -*- coding:utf-8 -*-
+
+"""
+
+
+
+Author:
+
+    Weichen Shen,wcshen1994@163.com
+
+
+
+Reference:
+
+    [1] Grover A, Leskovec J. node2vec: Scalable feature learning for networks[C]//Proceedings of the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining. ACM, 2016: 855-864.(https://www.kdd.org/kdd2016/papers/files/rfp0218-groverA.pdf)
+
+
+
+"""
+
 from gensim.models import Word2Vec
 import pandas as pd
 

@@ -1,3 +1,22 @@
+# -*- coding:utf-8 -*-
+
+"""
+
+
+
+Author:
+
+    Weichen Shen,wcshen1994@163.com
+
+
+
+Reference:
+
+    [1] Tang J, Qu M, Wang M, et al. Line: Large-scale information network embedding[C]//Proceedings of the 24th International Conference on World Wide Web. International World Wide Web Conferences Steering Committee, 2015: 1067-1077.(https://arxiv.org/pdf/1503.03578.pdf)
+
+
+
+"""
 import math
 import random
 
