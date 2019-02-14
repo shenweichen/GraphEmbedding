@@ -73,6 +73,6 @@ embeddings = model.get_embeddings()# get embedding vectors
 G = nx.read_edgelist('../data/flight/brazil-airports.edgelist',create_using=nx.DiGraph(),nodetype=None,data=[('weight',int)])#read graph
 
 model = model = Struc2Vec(G, 10, 80, workers=4, verbose=40, ) #init model
-model.train(batch_size=3000,epochs=40,verbose=2)# train model
+model.train(window_size = 5, iter = 3)# train model
 embeddings = model.get_embeddings()# get embedding vectors
 ```
