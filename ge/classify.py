@@ -41,7 +41,7 @@ class Classifier(object):
         results = {}
         for average in averages:
             results[average] = f1_score(Y, Y_, average=average)
-        #results['acc'] = accuracy_score(Y,Y_)
+        results['acc'] = accuracy_score(Y,Y_)
         print('-------------------')
         print(results)
         return results
