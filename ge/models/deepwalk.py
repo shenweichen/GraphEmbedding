@@ -31,13 +31,12 @@ class DeepWalk:
 
         self.walker = RandomWalker(
             graph, p=1, q=1, )
-        sentences = self.walker.simulate_walks(
+        self.sentences = self.walker.simulate_walks(
             num_walks=num_walks, walk_length=walk_length, workers=workers, verbose=1)
 
     def train(self, embed_size=128, window_size=5, workers=3, iter=5, **kwargs):
-        sentences = pd.read_pickle('random_walks.pkl')
 
-        kwargs["sentences"] = sentences
+        kwargs["sentences"] = self.sentences
         kwargs["min_count"] = kwargs.get("min_count", 0)
         kwargs["size"] = embed_size
         kwargs["sg"] = 1  # skip gram
