@@ -72,7 +72,7 @@ embeddings = model.get_embeddings()# get embedding vectors
 ```python
 G = nx.read_edgelist('../data/flight/brazil-airports.edgelist',create_using=nx.DiGraph(),nodetype=None,data=[('weight',int)])#read graph
 
-model = SDNE(G,hidden_size=[256,128]) #init model
+model = model = Struc2Vec(G, 10, 80, workers=4, verbose=40, ) #init model
 model.train(batch_size=3000,epochs=40,verbose=2)# train model
 embeddings = model.get_embeddings()# get embedding vectors
 ```
