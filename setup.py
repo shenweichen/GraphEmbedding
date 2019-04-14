@@ -8,10 +8,13 @@ with open("README.md", "r") as fh:
 
 REQUIRED_PACKAGES = [
     # 'tensorflow>=1.4.0,<=1.12.0',
-    'gensim',
-    'networkx',
+    'gensim==3.6.0',
+    'networkx==2.1',
+    'joblib==0.13.0',
     'scikit-learn',
     'numpy'
+    `tensorflow`
+
 ]
 
 
