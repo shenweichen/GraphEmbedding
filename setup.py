@@ -12,9 +12,8 @@ REQUIRED_PACKAGES = [
     'networkx==2.1',
     'joblib==0.13.0',
     'scikit-learn',
-    'numpy'
-    `tensorflow`
-
+    'numpy',
+    'tensorflow'
 ]
 
 
