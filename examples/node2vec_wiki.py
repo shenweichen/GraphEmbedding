@@ -36,7 +36,7 @@ def plot_embeddings(embeddings,):
         color_idx[Y[i][0]].append(i)
 
     for c, idx in color_idx.items():
-        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c))
+        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)
     plt.legend()
     plt.show()
 
