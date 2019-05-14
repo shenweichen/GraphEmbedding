@@ -10,8 +10,8 @@ def create_alias_table(area_ratio):
     l = len(area_ratio)
     accept, alias = [0] * l, [0] * l
     small, large = [], []
-
-    for i, prob in enumerate(area_ratio):
+    area_ratio_ = area_ratio * l
+    for i, prob in enumerate(area_ratio_):
         if prob < 1.0:
             small.append(i)
         else:
@@ -19,11 +19,11 @@ def create_alias_table(area_ratio):
 
     while small and large:
         small_idx, large_idx = small.pop(), large.pop()
-        accept[small_idx] = area_ratio[small_idx]
+        accept[small_idx] = area_ratio_[small_idx]
         alias[small_idx] = large_idx
-        area_ratio[large_idx] = area_ratio[large_idx] - \
-            (1 - area_ratio[small_idx])
-        if area_ratio[large_idx] < 1.0:
+        area_ratio_[large_idx] = area_ratio_[large_idx] - \
+            (1 - area_ratio_[small_idx])
+        if area_ratio_[large_idx] < 1.0:
             small.append(large_idx)
         else:
             large.append(large_idx)
