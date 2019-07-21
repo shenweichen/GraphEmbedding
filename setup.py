@@ -17,7 +17,6 @@ REQUIRED_PACKAGES = [
     'scikit-learn',
     'pandas',
     'matplotlib',
-    'tensorflow'
 ]
 
 
@@ -41,9 +40,9 @@ setuptools.setup(
 
     extras_require={
 
-        "tf": ['tensorflow>=1.4.0,!=1.7.*,!=1.8.*'],
+        "cpu": ['tensorflow>=1.4.0,!=1.7.*,!=1.8.*'],
 
-        "tf_gpu": ['tensorflow-gpu>=1.4.0,!=1.7.*,!=1.8.*'],
+        "gpu": ['tensorflow-gpu>=1.4.0,!=1.7.*,!=1.8.*'],
 
     },
 
