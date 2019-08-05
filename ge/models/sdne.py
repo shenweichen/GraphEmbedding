@@ -20,6 +20,7 @@ Reference:
 import time
 
 import numpy as np
+import scipy.sparse as sp
 import tensorflow as tf
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.callbacks import History
@@ -47,6 +48,7 @@ def l_1st(alpha):
         Y = y_pred
         batch_size = tf.to_float(K.shape(L)[0])
         return alpha * 2 * tf.linalg.trace(tf.matmul(tf.matmul(Y, L, transpose_a=True), Y)) / batch_size
+
     return loss_1st
 
 
@@ -105,7 +107,9 @@ class SDNE(object):
                 print('batch_size({0}) > node_size({1}),set batch_size = {1}'.format(
                     batch_size, self.node_size))
                 batch_size = self.node_size
-            return self.model.fit([self.A, self.L], [self.A, self.L], batch_size=batch_size, epochs=epochs, initial_epoch=initial_epoch, verbose=verbose, shuffle=False,)
+            return self.model.fit([self.A.todense(), self.L.todense()], [self.A.todense(), self.L.todense()],
+                                  batch_size=batch_size, epochs=epochs, initial_epoch=initial_epoch, verbose=verbose,
+                                  shuffle=False, )
         else:
             steps_per_epoch = (self.node_size - 1) // batch_size + 1
             hist = History()
@@ -117,12 +121,12 @@ class SDNE(object):
                 for i in range(steps_per_epoch):
                     index = np.arange(
                         i * batch_size, min((i + 1) * batch_size, self.node_size))
-                    A_train = self.A[index, :]
-                    L_mat_train = self.L[index][:, index]
+                    A_train = self.A[index, :].todense()
+                    L_mat_train = self.L[index][:, index].todense()
                     inp = [A_train, L_mat_train]
                     batch_losses = self.model.train_on_batch(inp, inp)
                     losses += batch_losses
-                losses = losses/steps_per_epoch
+                losses = losses / steps_per_epoch
 
                 logs['loss'] = losses[0]
                 logs['2nd_loss'] = losses[1]
@@ -140,7 +144,7 @@ class SDNE(object):
 
     def get_embeddings(self):
         self._embeddings = {}
-        embeddings = self.emb_model.predict(self.A, batch_size=self.node_size)
+        embeddings = self.emb_model.predict(self.A.todense(), batch_size=self.node_size)
         look_back = self.idx2node
         for i, embedding in enumerate(embeddings):
             self._embeddings[look_back[i]] = embedding
@@ -149,18 +153,28 @@ class SDNE(object):
 
     def _create_A_L(self, graph, node2idx):
         node_size = graph.number_of_nodes()
-        A = np.zeros((node_size, node_size))
-        A_ = np.zeros((node_size, node_size))
+        A_data = []
+        A_row_index = []
+        A_col_index = []
+
         for edge in graph.edges():
             v1, v2 = edge
             edge_weight = graph[v1][v2].get('weight', 1)
-            A[node2idx[v1]][node2idx[v2]] = edge_weight
 
-            A_[node2idx[v1]][node2idx[v2]] = edge_weight
-            A_[node2idx[v2]][node2idx[v1]] = edge_weight
+            A_data.append(edge_weight)
+            A_row_index.append(node2idx[v1])
+            A_col_index.append(node2idx[v2])
 
-        D = np.zeros_like(A)
+        A = sp.csr_matrix((A_data, (A_row_index, A_col_index)), shape=(node_size, node_size))
+        A_ = sp.csr_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
+                           shape=(node_size, node_size))
+
+        D_data = []
+        D_index = []
+
         for i in range(node_size):
-            D[i][i] = np.sum(A_[i])
+            D_data.append(np.sum(A_[i]))
+            D_index.append(i)
+        D = sp.csr_matrix((D_data, (D_index, D_index)), shape=(node_size, node_size))
         L = D - A_
         return A, L
