@@ -169,12 +169,6 @@ class SDNE(object):
         A_ = sp.csr_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
                            shape=(node_size, node_size))
 
-        D_data = []
-        D_index = []
-
-        for i in range(node_size):
-            D_data.append(np.sum(A_[i]))
-            D_index.append(i)
-        D = sp.csr_matrix((D_data, (D_index, D_index)), shape=(node_size, node_size))
+        D = sp.diags(A_.sum(axis=1).flatten().tolist()[0])
         L = D - A_
         return A, L
