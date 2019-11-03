@@ -20,7 +20,9 @@ python setup.py install
 cd examples
 python deepwalk_wiki.py
 ```
-
+# DisscussionGroup
+- 公众号：**浅梦的学习笔记**    wechat ID: **deepctrbot**
+![wechat](./pics/weichennote.png)
 # Usage
 The design and implementation follows simple principles(**graph in,embedding out**) as much as possible.
 ## Input format
