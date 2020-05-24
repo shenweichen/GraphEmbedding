@@ -80,7 +80,7 @@ if __name__ == "__main__":
     G = nx.read_edgelist('../data/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=None,
                          data=[('weight', int)])
 
-    model = Node2Vec(G, 10, 80, workers=1,p=0.25,q=2 )
+    model = Node2Vec(G, 10, 80, workers=1, p=0.25, q=2, use_rejection_sampling=0)
     model.train()
     embeddings = model.get_embeddings()
 

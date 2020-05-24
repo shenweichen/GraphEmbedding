@@ -26,11 +26,12 @@ from ..walker import RandomWalker
 
 class Node2Vec:
 
-    def __init__(self, graph, walk_length, num_walks, p=1.0, q=1.0, workers=1):
+    def __init__(self, graph, walk_length, num_walks, p=1.0, q=1.0, workers=1, use_rejection_sampling=0):
 
         self.graph = graph
         self._embeddings = {}
-        self.walker = RandomWalker(graph, p=p, q=q, )
+        self.walker = RandomWalker(
+            graph, p=p, q=q, use_rejection_sampling=use_rejection_sampling)
 
         print("Preprocess transition probs...")
         self.walker.preprocess_transition_probs()
