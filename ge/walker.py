@@ -191,6 +191,8 @@ class RandomWalker:
 
             for edge in G.edges():
                 alias_edges[edge] = self.get_alias_edge(edge[0], edge[1])
+                if not G.is_directed():
+                    alias_edges[(edge[1], edge[0])] = self.get_alias_edge(edge[1], edge[0])
                 self.alias_edges = alias_edges
 
         self.alias_nodes = alias_nodes
