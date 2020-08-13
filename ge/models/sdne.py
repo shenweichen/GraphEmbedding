@@ -165,8 +165,8 @@ class SDNE(object):
             A_row_index.append(node2idx[v1])
             A_col_index.append(node2idx[v2])
 
-        A = sp.csr_matrix((A_data, (A_row_index, A_col_index)), shape=(node_size, node_size))
-        A_ = sp.csr_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
+        A = sp.coo_matrix((A_data, (A_row_index, A_col_index)), shape=(node_size, node_size))
+        A_ = sp.coo_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
                            shape=(node_size, node_size))
 
         D = sp.diags(A_.sum(axis=1).flatten().tolist()[0])
