@@ -171,4 +171,4 @@ class SDNE(object):
 
         D = sp.diags(A_.sum(axis=1).flatten().tolist()[0])
         L = D - A_
-        return A, L
+        return A.tocsr(),L.tocsr()
