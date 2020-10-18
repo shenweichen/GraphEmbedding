@@ -29,13 +29,13 @@ python deepwalk_wiki.py
             <td>
                 公众号：<b>浅梦的学习笔记</b><br><br>
                 <a href="https://github.com/shenweichen/GraphEmbedding">
-  <img align="center" src="./docs/pics/code.png" />
+  <img align="center" src="./pics/code.png" />
 </a>
             </td>
             <td>
                 微信：<b>deepctrbot</b><br><br>
  <a href="https://github.com/shenweichen/GraphEmbedding">
-  <img align="center" src="./docs/pics/deepctrbot.png" />
+  <img align="center" src="./pics/deepctrbot.png" />
 </a>
             </td>
             <td>
