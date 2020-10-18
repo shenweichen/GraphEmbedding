@@ -20,9 +20,36 @@ python setup.py install
 cd examples
 python deepwalk_wiki.py
 ```
-# DisscussionGroup
-- 公众号：**浅梦的学习笔记**    wechat ID: **deepctrbot**
-![wechat](./pics/weichennote.png)
+
+## DisscussionGroup & Related Projects
+
+<html>
+    <table style="margin-left: 20px; margin-right: auto;">
+        <tr>
+            <td>
+                公众号：<b>浅梦的学习笔记</b><br><br>
+                <a href="https://github.com/shenweichen/GraphEmbedding">
+  <img align="center" src="./docs/pics/code.png" />
+</a>
+            </td>
+            <td>
+                微信：<b>deepctrbot</b><br><br>
+ <a href="https://github.com/shenweichen/GraphEmbedding">
+  <img align="center" src="./docs/pics/deepctrbot.png" />
+</a>
+            </td>
+            <td>
+<ul>
+<li><a href="https://github.com/shenweichen/AlgoNotes">AlgoNotes</a></li>
+<li><a href="https://github.com/shenweichen/DeepCTR">DeepCTR</a></li>
+<li><a href="https://github.com/shenweichen/DeepMatch">DeepMatch</a></li>
+<li><a href="https://github.com/shenweichen/DeepCTR-Torch">DeepCTR-Torch</a></li>
+</ul>
+            </td>
+        </tr>
+    </table>
+</html>
+
 # Usage
 The design and implementation follows simple principles(**graph in,embedding out**) as much as possible.
 ## Input format
