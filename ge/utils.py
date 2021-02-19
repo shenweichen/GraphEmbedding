@@ -1,11 +1,6 @@
 def preprocess_nxgraph(graph):
-    node2idx = {}
-    idx2node = []
-    node_size = 0
-    for node in graph.nodes():
-        node2idx[node] = node_size
-        idx2node.append(node)
-        node_size += 1
+    idx2node = list(graph.nodes())
+    node2idx = dict(zip(idx2node,list(range(len(idx2node)))))
     return idx2node, node2idx
 
 

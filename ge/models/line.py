@@ -30,11 +30,11 @@ from ..alias import create_alias_table, alias_sample
 from ..utils import preprocess_nxgraph
 
 
-def line_loss(y_true, y_pred):
+def line_loss(y_true, y_pred): ##no problem
     return -K.mean(K.log(K.sigmoid(y_true*y_pred)))
 
 
-def create_model(numNodes, embedding_size, order='second'):
+def create_model(numNodes, embedding_size, order='second'): ##no problem
 
     v_i = Input(shape=(1,))
     v_j = Input(shape=(1,))
@@ -48,12 +48,18 @@ def create_model(numNodes, embedding_size, order='second'):
 
     v_i_emb_second = second_emb(v_i)
     v_j_context_emb = context_emb(v_j)
-
-    first = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])
-    second = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
-
+    try:
+        first = Lambda(lambda x: tf.reduce_sum(
+            x[0]*x[1], axis=-1, keepdims=False), name='first_order')([v_i_emb, v_j_emb])
+    except(TypeError):
+        first = Lambda(lambda x: tf.reduce_sum(
+            x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])  
+    try:
+        second = Lambda(lambda x: tf.reduce_sum(
+            x[0]*x[1], axis=-1, keepdims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
+    except(TypeError):
+        second = Lambda(lambda x: tf.reduce_sum(
+            x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
     if order == 'first':
         output_list = [first]
     elif order == 'second':
@@ -205,9 +211,13 @@ class LINE:
 
         return self._embeddings
 
-    def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1):
+    def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1,workers=tf.data.experimental.AUTOTUNE,use_multiprocessing=True):
         self.reset_training_config(batch_size, times)
-        hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
-                                        verbose=verbose)
+        try:
+            hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
+                                            verbose=verbose,workers=workers,use_multiprocessing=use_multiprocessing)
+        except:
+            hist = self.model.fit(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
+                                            verbose=verbose,workers=workers,use_multiprocessing=use_multiprocessing)            
 
         return hist
