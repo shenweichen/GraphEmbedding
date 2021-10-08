@@ -5,6 +5,7 @@ import numpy
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
+import pandas as pd
 
 
 class TopKRanker(OneVsRestClassifier):
@@ -69,17 +70,9 @@ class Classifier(object):
 
 
 def read_node_label(filename, skip_head=False):
-    fin = open(filename, 'r')
-    X = []
-    Y = []
-    while 1:
-        if skip_head:
-            fin.readline()
-        l = fin.readline()
-        if l == '':
-            break
-        vec = l.strip().split(' ')
-        X.append(vec[0])
-        Y.append(vec[1:])
-    fin.close()
+    fin = pd.read_csv(filename)
+    cols=fin.columns
+    X = fin[cols[0]]
+    Y = fin[cols[1]]
+   
     return X, Y
