@@ -112,8 +112,8 @@ class Struc2Vec():
         sentences = self.sentences
 
         print("Learning representation...")
-        model = Word2Vec(sentences, size=embed_size, window=window_size, min_count=0, hs=1, sg=1, workers=workers,
-                         iter=iter)
+        model = Word2Vec(sentences, vector_size=embed_size, window=window_size, min_count=0, hs=1, sg=1, workers=workers,
+                         epochs=iter)
         print("Learning representation done!")
         self.w2v_model = model
 

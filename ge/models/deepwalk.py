@@ -38,12 +38,12 @@ class DeepWalk:
 
         kwargs["sentences"] = self.sentences
         kwargs["min_count"] = kwargs.get("min_count", 0)
-        kwargs["size"] = embed_size
+        kwargs["vector_size"] = embed_size
         kwargs["sg"] = 1  # skip gram
         kwargs["hs"] = 1  # deepwalk use Hierarchical Softmax
         kwargs["workers"] = workers
         kwargs["window"] = window_size
-        kwargs["iter"] = iter
+        kwargs["epochs"] = iter
 
         print("Learning embedding vectors...")
         model = Word2Vec(**kwargs)

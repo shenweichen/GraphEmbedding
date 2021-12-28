@@ -43,12 +43,12 @@ class Node2Vec:
 
         kwargs["sentences"] = self.sentences
         kwargs["min_count"] = kwargs.get("min_count", 0)
-        kwargs["size"] = embed_size
+        kwargs["vector_size"] = embed_size
         kwargs["sg"] = 1
         kwargs["hs"] = 0  # node2vec not use Hierarchical Softmax
         kwargs["workers"] = workers
         kwargs["window"] = window_size
-        kwargs["iter"] = iter
+        kwargs["epochs"] = iter
 
         print("Learning embedding vectors...")
         model = Word2Vec(**kwargs)
