@@ -22,7 +22,7 @@ from gensim.models import Word2Vec
 import pandas as pd
 
 
-class DeepWalk:
+class BFSWalk:
     def __init__(self, graph, walk_length, num_walks, workers=1, weight = False):
 
         self.graph = graph
@@ -31,7 +31,7 @@ class DeepWalk:
 
         self.walker = RandomWalker(
             graph, p=1, q=1, )
-        self.sentences = self.walker.simulate_walks("deep",
+        self.sentences = self.walker.simulate_walks("bfs",
             num_walks=num_walks, walk_length=walk_length, workers=workers, verbose=1, weight = weight)
 
     def train(self, embed_size=128, window_size=5, workers=3, iter=5, sg = 1, hs=1, **kwargs):

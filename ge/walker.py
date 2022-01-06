@@ -37,6 +37,47 @@ class RandomWalker:
                 break
         return walk
 
+    def bfs_walk(self, walk_length, start_node):
+
+        walk = [start_node]
+
+        while len(walk) < walk_length:
+            cur = walk[-1]
+            cur_nbrs = list(self.G.neighbors(cur))
+            if len(cur_nbrs) > 0:
+                l = len(cur_nbrs)
+                ranlist = random.sample(range(0,l),l)
+                for i in ranlist:
+                    walk.append(cur_nbrs[i])
+                #walk.append(random.choice(cur_nbrs))
+            else:
+                break
+        return walk
+
+    def deepwalk_walk_weighted(self, walk_length, start_node):
+
+        walk = [start_node]
+
+        while len(walk) < walk_length:
+            cur = walk[-1]
+            cur_nbrs = list(self.G.neighbors(cur))
+            if len(cur_nbrs) > 0:
+                p = self.chose_node_p(cur, cur_nbrs)
+                walk.append(random.choice(cur_nbrs, p = p))
+            else:
+                break
+        return walk
+
+    # 根据边的权重，计算每个edge被选择的概率
+    def chose_node_p(self, cur, nbrs):
+        # 计算每一个位置被选择的概率,返回概率
+        weight = []
+        for i in nbrs:
+            weight.append(self.G[cur][i]["weight"])
+
+        total = sum(weight)
+        return [i/total for i in weight]
+
     def node2vec_walk(self, walk_length, start_node):
 
         G = self.G
@@ -116,34 +157,42 @@ class RandomWalker:
                 break
         return walk
 
-    def simulate_walks(self, num_walks, walk_length, workers=1, verbose=0):
-
+    def simulate_walks(self, method, num_walks, walk_length, workers=1, verbose=0, weight = False):
         G = self.G
 
         nodes = list(G.nodes())
 
         results = Parallel(n_jobs=workers, verbose=verbose, )(
-            delayed(self._simulate_walks)(nodes, num, walk_length) for num in
+            delayed(self._simulate_walks)(method, nodes, num, walk_length, weight) for num in
             partition_num(num_walks, workers))
 
         walks = list(itertools.chain(*results))
 
         return walks
 
-    def _simulate_walks(self, nodes, num_walks, walk_length,):
+    def _simulate_walks(self, method, nodes, num_walks, walk_length, weight = False):
         walks = []
         for _ in range(num_walks):
             random.shuffle(nodes)
             for v in nodes:
-                if self.p == 1 and self.q == 1:
-                    walks.append(self.deepwalk_walk(
-                        walk_length=walk_length, start_node=v))
-                elif self.use_rejection_sampling:
-                    walks.append(self.node2vec_walk2(
-                        walk_length=walk_length, start_node=v))
+                if method == "deep":
+                    if weight:
+                        walks.append(self.deepwalk_walk_weighted(
+                            walk_length=walk_length, start_node=v))
+                    else:
+                        walks.append(self.deepwalk_walk(
+                            walk_length=walk_length, start_node=v))
+                elif method == "bfs":
+                    walks.append(self.bfs_walk(walk_length=walk_length, start_node=v))
+                elif method == "node":
+                    if self.use_rejection_sampling:
+                        walks.append(self.node2vec_walk2(
+                            walk_length=walk_length, start_node=v))
+                    else:
+                        walks.append(self.node2vec_walk(
+                            walk_length=walk_length, start_node=v))
                 else:
-                    walks.append(self.node2vec_walk(
-                        walk_length=walk_length, start_node=v))
+                    pass
         return walks
 
     def get_alias_edge(self, t, v):
