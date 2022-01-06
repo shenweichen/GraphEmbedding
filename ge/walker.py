@@ -41,17 +41,15 @@ class RandomWalker:
 
         walk = [start_node]
 
-        while len(walk) < walk_length:
-            cur = walk[-1]
-            cur_nbrs = list(self.G.neighbors(cur))
-            if len(cur_nbrs) > 0:
-                l = len(cur_nbrs)
-                ranlist = random.sample(range(0,l),l)
-                for i in ranlist:
-                    walk.append(cur_nbrs[i])
-                #walk.append(random.choice(cur_nbrs))
-            else:
-                break
+        # while len(walk) < walk_length:
+        cur = walk[-1]
+        cur_nbrs = list(self.G.neighbors(cur))
+        if len(cur_nbrs) > 0:
+            l = len(cur_nbrs)
+            ranlist = random.sample(range(0,l),l)
+            for i in ranlist:
+                walk.append(cur_nbrs[i])
+
         return walk
 
     def deepwalk_walk_weighted(self, walk_length, start_node):
