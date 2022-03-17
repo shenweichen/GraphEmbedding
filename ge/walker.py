@@ -159,7 +159,9 @@ class RandomWalker:
         G = self.G
 
         nodes = list(G.nodes())
-
+        print(len(nodes))
+        nodes = [i for i in nodes if G.out_degree(i)]
+        print(len(nodes))
         results = Parallel(n_jobs=workers, verbose=verbose, )(
             delayed(self._simulate_walks)(method, nodes, num, walk_length, weight) for num in
             partition_num(num_walks, workers))
