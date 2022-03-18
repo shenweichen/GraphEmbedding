@@ -35,7 +35,8 @@ class RandomWalker:
                 walk.append(random.choice(cur_nbrs))
             else:
                 break
-        return walk
+
+        return " ".join(walk)
 
     def bfs_walk(self, walk_length, start_node):
 
@@ -50,7 +51,7 @@ class RandomWalker:
             for i in ranlist:
                 walk.append(cur_nbrs[i])
 
-        return walk
+        return " ".join(walk)
 
     def deepwalk_walk_weighted(self, walk_length, start_node):
 
@@ -64,7 +65,7 @@ class RandomWalker:
                 walk.append(random.choice(cur_nbrs, p = p))
             else:
                 break
-        return walk
+        return " ".join(walk)
 
     # 根据边的权重，计算每个edge被选择的概率
     def chose_node_p(self, cur, nbrs):
@@ -100,7 +101,7 @@ class RandomWalker:
             else:
                 break
 
-        return walk
+        return " ".join(walk)
 
     def node2vec_walk2(self, walk_length, start_node):
         """
@@ -153,28 +154,32 @@ class RandomWalker:
                     walk.append(next_node)
             else:
                 break
-        return walk
+        return " ".join(walk)
 
-    def simulate_walks(self, method, num_walks, walk_length, workers=1, verbose=0, weight = False):
+    def simulate_walks(self, method, outlier, num_walks, walk_length, workers=1, verbose=0, weight = False):
         G = self.G
 
         nodes = list(G.nodes())
         print(len(nodes))
         nodes = [i for i in nodes if G.out_degree(i)]
+        nodes.extend(outlier)
+        random.shuffle(nodes)
         print(len(nodes))
-        results = Parallel(n_jobs=workers, verbose=verbose, )(
-            delayed(self._simulate_walks)(method, nodes, num, walk_length, weight) for num in
-            partition_num(num_walks, workers))
+        # results = Parallel(n_jobs=workers, verbose=verbose, )(
+        #     delayed(self._simulate_walks)(method, nodes, num, walk_length, weight) for num in
+        #     partition_num(num_walks, workers))
 
-        walks = list(itertools.chain(*results))
+        # walks = list(itertools.chain(*results))
+        walks = []
+        self._simulate_walks(walks, method, nodes, num_walks, walk_length, weight)
 
         return walks
 
-    def _simulate_walks(self, method, nodes, num_walks, walk_length, weight = False):
-        walks = []
-        for _ in range(num_walks):
-            random.shuffle(nodes)
-            for v in nodes:
+    def _simulate_walks(self, walks, method, nodes, num_walks, walk_length, weight = False):
+        # walks = []
+        for v in nodes:
+            for _ in range(num_walks):
+            # random.shuffle(nodes)
                 if method == "deep":
                     if weight:
                         walks.append(self.deepwalk_walk_weighted(

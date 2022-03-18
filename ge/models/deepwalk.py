@@ -18,12 +18,12 @@ Reference:
 
 """
 from ..walker import RandomWalker
-from gensim.models import Word2Vec
+from gensim.models import Word2Vec, word2vec
 import pandas as pd
 
 
 class DeepWalk:
-    def __init__(self, graph, walk_length, num_walks, workers=1, weight = False):
+    def __init__(self, graph, outlier, walk_length, num_walks, workers=1, weight = False):
 
         self.graph = graph
         self.w2v_model = None
@@ -31,13 +31,13 @@ class DeepWalk:
 
         self.walker = RandomWalker(
             graph, p=1, q=1, )
-        self.sentences = self.walker.simulate_walks("deep",
+        self.sentences = self.walker.simulate_walks("deep", outlier,
             num_walks=num_walks, walk_length=walk_length, workers=workers, verbose=1, weight = weight)
 
-    def train(self, embed_size=128, window_size=5, workers=3, iter=5, sg = 1, hs=1, **kwargs):
+    def train(self, walkfile, embed_size=128, window_size=5, workers=3, iter=5, sg = 1, hs=1, **kwargs):
 
-        kwargs["sentences"] = self.sentences
-        kwargs["min_count"] = kwargs.get("min_count", 0)
+        kwargs["sentences"] = word2vec.Text8Corpus(walkfile)
+        kwargs["min_count"] = kwargs.get("min_count", 1)
         kwargs["vector_size"] = embed_size
         kwargs["sg"] = sg  # skip gram
         kwargs["hs"] = hs  # deepwalk use Hierarchical Softmax
@@ -62,3 +62,6 @@ class DeepWalk:
             self._embeddings[word] = self.w2v_model.wv[word]
 
         return self._embeddings
+
+    def get_sentences(self):
+        return self.sentences
