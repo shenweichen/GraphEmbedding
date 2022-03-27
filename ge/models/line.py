@@ -92,7 +92,7 @@ class LINE:
         self.node_size = graph.number_of_nodes()
         self.edge_size = graph.number_of_edges()
         self.samples_per_epoch = self.edge_size*(1+negative_ratio)
-
+        
         self._gen_sampling_table()
         self.reset_model()
 
