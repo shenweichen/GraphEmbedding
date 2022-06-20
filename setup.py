@@ -13,7 +13,7 @@ REQUIRED_PACKAGES = [
     'joblib',
     'fastdtw',
     'tqdm',
-    'numpy==1.19.5',
+    'numpy',
     'scikit-learn',
     'pandas',
     'matplotlib',
@@ -29,13 +29,13 @@ setuptools.setup(
 
     author="Weichen Shen",
 
-    author_email="wcshen1994@163.com",
+    author_email="weichenswc@163.com",
 
     url="https://github.com/shenweichen/GraphEmbedding",
 
     packages=setuptools.find_packages(exclude=[]),
 
-    python_requires='>=3.4',  # 3.4.6
+    python_requires='>=3.5',  # 3.4.6
 
     install_requires=REQUIRED_PACKAGES,
 
