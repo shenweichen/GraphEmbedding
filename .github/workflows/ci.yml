@@ -58,6 +58,7 @@ jobs:
         pip install -q protobuf==3.19.0
         pip install -q requests
         pip install -e .
+        pip install numpy==1.19.5
     - name: Test with pytest
       timeout-minutes: 180
       run: |
