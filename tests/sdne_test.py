@@ -1,14 +1,14 @@
 import networkx as nx
 
-from ge import Node2Vec
+from ge import SDNE
 
 
-def test_Node2Vec():
+def test_SDNE():
     G = nx.read_edgelist('./tests/Wiki_edgelist.txt',
                          create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
-    model = Node2Vec(G, walk_length=10, num_walks=80,
-                     p=0.25, q=4, workers=1, use_rejection_sampling=0)
-    model.train(window_size=5, iter=3)
+
+    model = SDNE(G, hidden_size=[8, 4], )
+    model.train(batch_size=2, epochs=1, verbose=2)
     embeddings = model.get_embeddings()
 
 
