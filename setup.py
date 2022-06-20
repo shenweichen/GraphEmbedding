@@ -17,6 +17,7 @@ REQUIRED_PACKAGES = [
     'scikit-learn',
     'pandas',
     'matplotlib',
+    'deepctr'
 ]
 
 
