@@ -12,7 +12,7 @@ from .utils import partition_num
 
 
 class RandomWalker:
-    def __init__(self, G, p=1, q=1, use_rejection_sampling=0):
+    def __init__(self, G, p=1, q=1, use_rejection_sampling=False):
         """
         :param G:
         :param p: Return parameter,controls the likelihood of immediately revisiting a node in the walk.

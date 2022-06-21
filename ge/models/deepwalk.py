@@ -6,7 +6,7 @@
 
 Author:
 
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 
 
 
@@ -17,9 +17,9 @@ Reference:
 
 
 """
-from ..walker import RandomWalker
 from gensim.models import Word2Vec
-import pandas as pd
+
+from ..walker import RandomWalker
 
 
 class DeepWalk:
@@ -52,7 +52,7 @@ class DeepWalk:
         self.w2v_model = model
         return model
 
-    def get_embeddings(self,):
+    def get_embeddings(self, ):
         if self.w2v_model is None:
             print("model not train")
             return {}

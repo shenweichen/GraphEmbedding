@@ -6,7 +6,7 @@
 
 Author:
 
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 
 
 
@@ -19,14 +19,13 @@ Reference:
 """
 
 from gensim.models import Word2Vec
-import pandas as pd
 
 from ..walker import RandomWalker
 
 
 class Node2Vec:
 
-    def __init__(self, graph, walk_length, num_walks, p=1.0, q=1.0, workers=1, use_rejection_sampling=0):
+    def __init__(self, graph, walk_length, num_walks, p=1.0, q=1.0, workers=1, use_rejection_sampling=False):
 
         self.graph = graph
         self._embeddings = {}
@@ -57,7 +56,7 @@ class Node2Vec:
 
         return model
 
-    def get_embeddings(self,):
+    def get_embeddings(self, ):
         if self.w2v_model is None:
             print("model not train")
             return {}
