@@ -4,7 +4,7 @@
 )](https://github.com/shenweichen/graphembedding/issues)
 ![CI status](https://github.com/shenweichen/graphembedding/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/shenweichen/graphembedding/branch/master/graph/badge.svg)](https://codecov.io/gh/shenweichen/graphembedding)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d4099734dc0e4bab91d332ead8c0bdd0)](https://www.codacy.com/gh/shenweichen/DeepCTR?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=shenweichen/DeepCTR&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c46407f5931f40048e28860dccf7dabc)](https://www.codacy.com/gh/shenweichen/GraphEmbedding/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=shenweichen/GraphEmbedding&amp;utm_campaign=Badge_Grade)
 [![Disscussion](https://img.shields.io/badge/chat-wechat-brightgreen?style=flat)](./README.md#disscussiongroup--related-projects)
 
 [comment]: <> ([![License]&#40;https://img.shields.io/github/license/shenweichen/graphembedding.svg&#41;]&#40;https://github.com/shenweichen/graphembedding/blob/master/LICENSE&#41;)

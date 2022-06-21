@@ -45,7 +45,6 @@ class Classifier(object):
         print('-------------------')
         print(results)
         return results
-        print('-------------------')
 
     def predict(self, X, top_k_list):
         X_ = numpy.asarray([self.embeddings[x] for x in X])
