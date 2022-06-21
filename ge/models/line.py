@@ -6,7 +6,7 @@
 
 Author:
 
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 
 
 
@@ -21,7 +21,7 @@ import math
 import random
 
 import numpy as np
-import tensorflow as tf
+from deepctr.layers.utils import reduce_sum
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.layers import Embedding, Input, Lambda
 from tensorflow.python.keras.models import Model
@@ -31,11 +31,10 @@ from ..utils import preprocess_nxgraph
 
 
 def line_loss(y_true, y_pred):
-    return -K.mean(K.log(K.sigmoid(y_true*y_pred)))
+    return -K.mean(K.log(K.sigmoid(y_true * y_pred)))
 
 
 def create_model(numNodes, embedding_size, order='second'):
-
     v_i = Input(shape=(1,))
     v_j = Input(shape=(1,))
 
@@ -49,10 +48,10 @@ def create_model(numNodes, embedding_size, order='second'):
     v_i_emb_second = second_emb(v_i)
     v_j_context_emb = context_emb(v_j)
 
-    first = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])
-    second = Lambda(lambda x: tf.reduce_sum(
-        x[0]*x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
+    first = Lambda(lambda x: reduce_sum(
+        x[0] * x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])
+    second = Lambda(lambda x: reduce_sum(
+        x[0] * x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
 
     if order == 'first':
         output_list = [first]
@@ -67,7 +66,7 @@ def create_model(numNodes, embedding_size, order='second'):
 
 
 class LINE:
-    def __init__(self, graph, embedding_size=8, negative_ratio=5, order='second',):
+    def __init__(self, graph, embedding_size=8, negative_ratio=5, order='second', ):
         """
 
         :param graph:
@@ -91,7 +90,7 @@ class LINE:
 
         self.node_size = graph.number_of_nodes()
         self.edge_size = graph.number_of_edges()
-        self.samples_per_epoch = self.edge_size*(1+negative_ratio)
+        self.samples_per_epoch = self.edge_size * (1 + negative_ratio)
 
         self._gen_sampling_table()
         self.reset_model()
@@ -99,7 +98,7 @@ class LINE:
     def reset_training_config(self, batch_size, times):
         self.batch_size = batch_size
         self.steps_per_epoch = (
-            (self.samples_per_epoch - 1) // self.batch_size + 1)*times
+                                       (self.samples_per_epoch - 1) // self.batch_size + 1) * times
 
     def reset_model(self, opt='adam'):
 
@@ -118,7 +117,7 @@ class LINE:
 
         for edge in self.graph.edges():
             node_degree[node2idx[edge[0]]
-                        ] += self.graph[edge[0]][edge[1]].get('weight', 1.0)
+            ] += self.graph[edge[0]][edge[1]].get('weight', 1.0)
 
         total_sum = sum([math.pow(node_degree[i], power)
                          for i in range(numNodes)])
@@ -165,10 +164,9 @@ class LINE:
                     t.append(cur_t)
                 sign = np.ones(len(h))
             else:
-                sign = np.ones(len(h))*-1
+                sign = np.ones(len(h)) * -1
                 t = []
                 for i in range(len(h)):
-
                     t.append(alias_sample(
                         self.node_accept, self.node_alias))
 
@@ -190,7 +188,7 @@ class LINE:
                 start_index = 0
                 end_index = min(start_index + self.batch_size, data_size)
 
-    def get_embeddings(self,):
+    def get_embeddings(self, ):
         self._embeddings = {}
         if self.order == 'first':
             embeddings = self.embedding_dict['first'].get_weights()[0]
@@ -198,7 +196,7 @@ class LINE:
             embeddings = self.embedding_dict['second'].get_weights()[0]
         else:
             embeddings = np.hstack((self.embedding_dict['first'].get_weights()[
-                                   0], self.embedding_dict['second'].get_weights()[0]))
+                                        0], self.embedding_dict['second'].get_weights()[0]))
         idx2node = self.idx2node
         for i, embedding in enumerate(embeddings):
             self._embeddings[idx2node[i]] = embedding
@@ -207,7 +205,8 @@ class LINE:
 
     def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1):
         self.reset_training_config(batch_size, times)
-        hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch, steps_per_epoch=self.steps_per_epoch,
+        hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch,
+                                        steps_per_epoch=self.steps_per_epoch,
                                         verbose=verbose)
 
         return hist

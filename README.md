@@ -1,5 +1,14 @@
 # GraphEmbedding
 
+[![GitHub Issues](https://img.shields.io/github/issues/shenweichen/graphembedding.svg
+)](https://github.com/shenweichen/graphembedding/issues)
+![CI status](https://github.com/shenweichen/graphembedding/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/shenweichen/graphembedding/branch/master/graph/badge.svg)](https://codecov.io/gh/shenweichen/graphembedding)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c46407f5931f40048e28860dccf7dabc)](https://www.codacy.com/gh/shenweichen/GraphEmbedding/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=shenweichen/GraphEmbedding&amp;utm_campaign=Badge_Grade)
+[![Disscussion](https://img.shields.io/badge/chat-wechat-brightgreen?style=flat)](./README.md#disscussiongroup--related-projects)
+
+[comment]: <> ([![License]&#40;https://img.shields.io/github/license/shenweichen/graphembedding.svg&#41;]&#40;https://github.com/shenweichen/graphembedding/blob/master/LICENSE&#41;)
+
 # Method
 
 
@@ -27,7 +36,7 @@ python deepwalk_wiki.py
     <table style="margin-left: 20px; margin-right: auto;">
         <tr>
             <td>
-                公众号：<b>浅梦的学习笔记</b><br><br>
+                公众号：<b>浅梦学习笔记</b><br><br>
                 <a href="https://github.com/shenweichen/GraphEmbedding">
   <img align="center" src="./pics/code.png" />
 </a>
@@ -101,7 +110,7 @@ embeddings = model.get_embeddings()# get embedding vectors
 ```python
 G = nx.read_edgelist('../data/flight/brazil-airports.edgelist',create_using=nx.DiGraph(),nodetype=None,data=[('weight',int)])#read graph
 
-model = model = Struc2Vec(G, 10, 80, workers=4, verbose=40, ) #init model
+model = Struc2Vec(G, 10, 80, workers=4, verbose=40, ) #init model
 model.train(window_size = 5, iter = 3)# train model
 embeddings = model.get_embeddings()# get embedding vectors
 ```

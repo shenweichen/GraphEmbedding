@@ -6,7 +6,7 @@
 
 Author:
 
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 
 
 
@@ -17,9 +17,9 @@ Reference:
 
 
 """
-from ..walker import RandomWalker
 from gensim.models import Word2Vec
-import pandas as pd
+
+from ..walker import RandomWalker
 
 
 class DeepWalk:
@@ -38,12 +38,12 @@ class DeepWalk:
 
         kwargs["sentences"] = self.sentences
         kwargs["min_count"] = kwargs.get("min_count", 0)
-        kwargs["size"] = embed_size
+        kwargs["vector_size"] = embed_size
         kwargs["sg"] = 1  # skip gram
         kwargs["hs"] = 1  # deepwalk use Hierarchical Softmax
         kwargs["workers"] = workers
         kwargs["window"] = window_size
-        kwargs["iter"] = iter
+        kwargs["epochs"] = iter
 
         print("Learning embedding vectors...")
         model = Word2Vec(**kwargs)
@@ -52,7 +52,7 @@ class DeepWalk:
         self.w2v_model = model
         return model
 
-    def get_embeddings(self,):
+    def get_embeddings(self, ):
         if self.w2v_model is None:
             print("model not train")
             return {}

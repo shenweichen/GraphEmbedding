@@ -22,7 +22,7 @@ def create_alias_table(area_ratio):
         accept[small_idx] = area_ratio_[small_idx]
         alias[small_idx] = large_idx
         area_ratio_[large_idx] = area_ratio_[large_idx] - \
-            (1 - area_ratio_[small_idx])
+                                 (1 - area_ratio_[small_idx])
         if area_ratio_[large_idx] < 1.0:
             small.append(large_idx)
         else:
@@ -46,7 +46,7 @@ def alias_sample(accept, alias):
     :return: sample index
     """
     N = len(accept)
-    i = int(np.random.random()*N)
+    i = int(np.random.random() * N)
     r = np.random.random()
     if r < accept[i]:
         return i

@@ -6,7 +6,7 @@
 
 Author:
 
-    Weichen Shen,wcshen1994@163.com
+    Weichen Shen,weichenswc@163.com
 
 
 
@@ -88,8 +88,7 @@ class SDNE(object):
         self.nu1 = nu1
         self.nu2 = nu2
 
-        self.A, self.L = self._create_A_L(
-            self.graph, self.node2idx)  # Adj Matrix,L Matrix
+        self.A, self.L = _create_A_L(self.graph, self.node2idx)  # Adj Matrix,L Matrix
         self.reset_model()
         self.inputs = [self.A, self.L]
         self._embeddings = {}
@@ -151,24 +150,25 @@ class SDNE(object):
 
         return self._embeddings
 
-    def _create_A_L(self, graph, node2idx):
-        node_size = graph.number_of_nodes()
-        A_data = []
-        A_row_index = []
-        A_col_index = []
 
-        for edge in graph.edges():
-            v1, v2 = edge
-            edge_weight = graph[v1][v2].get('weight', 1)
+def _create_A_L(graph, node2idx):
+    node_size = graph.number_of_nodes()
+    A_data = []
+    A_row_index = []
+    A_col_index = []
 
-            A_data.append(edge_weight)
-            A_row_index.append(node2idx[v1])
-            A_col_index.append(node2idx[v2])
+    for edge in graph.edges():
+        v1, v2 = edge
+        edge_weight = graph[v1][v2].get('weight', 1)
 
-        A = sp.csr_matrix((A_data, (A_row_index, A_col_index)), shape=(node_size, node_size))
-        A_ = sp.csr_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
-                           shape=(node_size, node_size))
+        A_data.append(edge_weight)
+        A_row_index.append(node2idx[v1])
+        A_col_index.append(node2idx[v2])
 
-        D = sp.diags(A_.sum(axis=1).flatten().tolist()[0])
-        L = D - A_
-        return A, L
+    A = sp.csr_matrix((A_data, (A_row_index, A_col_index)), shape=(node_size, node_size))
+    A_ = sp.csr_matrix((A_data + A_data, (A_row_index + A_col_index, A_col_index + A_row_index)),
+                       shape=(node_size, node_size))
+
+    D = sp.diags(A_.sum(axis=1).flatten().tolist()[0])
+    L = D - A_
+    return A, L

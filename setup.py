@@ -7,16 +7,17 @@ with open("README.md", "r") as fh:
 
 
 REQUIRED_PACKAGES = [
-    # 'tensorflow>=1.4.0,<=1.12.0',
-    'gensim==3.6.0',
-    'networkx==2.1',
-    'joblib==0.13.0',
-    'fastdtw==0.3.2',
+    # 'tensorflow>=1.4.0',
+    'gensim>=4.0.0',
+    'networkx',
+    'joblib',
+    'fastdtw',
     'tqdm',
     'numpy',
     'scikit-learn',
     'pandas',
     'matplotlib',
+    'deepctr'
 ]
 
 
@@ -28,13 +29,13 @@ setuptools.setup(
 
     author="Weichen Shen",
 
-    author_email="wcshen1994@163.com",
+    author_email="weichenswc@163.com",
 
     url="https://github.com/shenweichen/GraphEmbedding",
 
     packages=setuptools.find_packages(exclude=[]),
 
-    python_requires='>=3.4',  # 3.4.6
+    python_requires='>=3.5',  # 3.4.6
 
     install_requires=REQUIRED_PACKAGES,
 

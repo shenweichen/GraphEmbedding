@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-
 import numpy
 from sklearn.metrics import f1_score, accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
@@ -41,11 +40,10 @@ class Classifier(object):
         results = {}
         for average in averages:
             results[average] = f1_score(Y, Y_, average=average)
-        results['acc'] = accuracy_score(Y,Y_)
+        results['acc'] = accuracy_score(Y, Y_)
         print('-------------------')
         print(results)
         return results
-        print('-------------------')
 
     def predict(self, X, top_k_list):
         X_ = numpy.asarray([self.embeddings[x] for x in X])

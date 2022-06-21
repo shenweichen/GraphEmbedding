@@ -2,17 +2,15 @@ import itertools
 import math
 import random
 
-import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-from tqdm import trange
 
 from .alias import alias_sample, create_alias_table
 from .utils import partition_num
 
 
 class RandomWalker:
-    def __init__(self, G, p=1, q=1, use_rejection_sampling=0):
+    def __init__(self, G, p=1, q=1, use_rejection_sampling=False):
         """
         :param G:
         :param p: Return parameter,controls the likelihood of immediately revisiting a node in the walk.
@@ -130,7 +128,7 @@ class RandomWalker:
 
         return walks
 
-    def _simulate_walks(self, nodes, num_walks, walk_length,):
+    def _simulate_walks(self, nodes, num_walks, walk_length, ):
         walks = []
         for _ in range(num_walks):
             random.shuffle(nodes)
@@ -161,14 +159,14 @@ class RandomWalker:
         for x in G.neighbors(v):
             weight = G[v][x].get('weight', 1.0)  # w_vx
             if x == t:  # d_tx == 0
-                unnormalized_probs.append(weight/p)
+                unnormalized_probs.append(weight / p)
             elif G.has_edge(x, t):  # d_tx == 1
                 unnormalized_probs.append(weight)
             else:  # d_tx > 1
-                unnormalized_probs.append(weight/q)
+                unnormalized_probs.append(weight / q)
         norm_const = sum(unnormalized_probs)
         normalized_probs = [
-            float(u_prob)/norm_const for u_prob in unnormalized_probs]
+            float(u_prob) / norm_const for u_prob in unnormalized_probs]
 
         return create_alias_table(normalized_probs)
 
@@ -183,7 +181,7 @@ class RandomWalker:
                                   for nbr in G.neighbors(node)]
             norm_const = sum(unnormalized_probs)
             normalized_probs = [
-                float(u_prob)/norm_const for u_prob in unnormalized_probs]
+                float(u_prob) / norm_const for u_prob in unnormalized_probs]
             alias_nodes[node] = create_alias_table(normalized_probs)
 
         if not self.use_rejection_sampling:
@@ -209,17 +207,16 @@ class BiasedWalker:
 
     def simulate_walks(self, num_walks, walk_length, stay_prob=0.3, workers=1, verbose=0):
 
-        layers_adj = pd.read_pickle(self.temp_path+'layers_adj.pkl')
-        layers_alias = pd.read_pickle(self.temp_path+'layers_alias.pkl')
-        layers_accept = pd.read_pickle(self.temp_path+'layers_accept.pkl')
-        gamma = pd.read_pickle(self.temp_path+'gamma.pkl')
-        walks = []
-        initialLayer = 0
+        layers_adj = pd.read_pickle(self.temp_path + 'layers_adj.pkl')
+        layers_alias = pd.read_pickle(self.temp_path + 'layers_alias.pkl')
+        layers_accept = pd.read_pickle(self.temp_path + 'layers_accept.pkl')
+        gamma = pd.read_pickle(self.temp_path + 'gamma.pkl')
 
         nodes = self.idx  # list(self.g.nodes())
 
         results = Parallel(n_jobs=workers, verbose=verbose, )(
-            delayed(self._simulate_walks)(nodes, num, walk_length, stay_prob, layers_adj, layers_accept, layers_alias, gamma) for num in
+            delayed(self._simulate_walks)(nodes, num, walk_length, stay_prob, layers_adj, layers_accept, layers_alias,
+                                          gamma) for num in
             partition_num(num_walks, workers))
 
         walks = list(itertools.chain(*results))
@@ -243,7 +240,7 @@ class BiasedWalker:
 
         while len(path) < walk_length:
             r = random.random()
-            if(r < stay_prob):  # same layer
+            if (r < stay_prob):  # same layer
                 v = chooseNeighbor(v, graphs, layers_alias,
                                    layers_accept, layer)
                 path.append(self.idx2node[v])
@@ -256,18 +253,17 @@ class BiasedWalker:
                     print(layer, v)
                     raise ValueError()
 
-                if(r > p_moveup):
-                    if(layer > initialLayer):
+                if (r > p_moveup):
+                    if (layer > initialLayer):
                         layer = layer - 1
                 else:
-                    if((layer + 1) in graphs and v in graphs[layer + 1]):
+                    if ((layer + 1) in graphs and v in graphs[layer + 1]):
                         layer = layer + 1
 
         return path
 
 
 def chooseNeighbor(v, graphs, layers_alias, layers_accept, layer):
-
     v_list = graphs[layer][v]
 
     idx = alias_sample(layers_accept[layer][v], layers_alias[layer][v])
