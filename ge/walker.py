@@ -211,8 +211,6 @@ class BiasedWalker:
         layers_alias = pd.read_pickle(self.temp_path + 'layers_alias.pkl')
         layers_accept = pd.read_pickle(self.temp_path + 'layers_accept.pkl')
         gamma = pd.read_pickle(self.temp_path + 'gamma.pkl')
-        walks = []
-        initialLayer = 0
 
         nodes = self.idx  # list(self.g.nodes())
 
