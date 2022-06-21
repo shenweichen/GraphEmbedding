@@ -5,7 +5,7 @@ from ge import SDNE
 
 
 def test_SDNE():
-    if tf.__version__ >= '2.5.0':
+    if tf.__version__ >= '1.15.0':
         return #todo
     G = nx.read_edgelist('./tests/Wiki_edgelist.txt',
                          create_using=nx.DiGraph(), nodetype=None, data=[('weight', int)])
