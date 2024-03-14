@@ -23,6 +23,9 @@
 
 # How to run examples
 1. clone the repo and make sure you have installed `tensorflow` or `tensorflow-gpu` on your local machine. 
+```bash
+git clone https://github.com/jlchen5/GraphEmbedding
+```
 2. run following commands
 ```bash
 python setup.py install
