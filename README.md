@@ -33,8 +33,6 @@ pip install -e .[tf]
 python examples/deepwalk_wiki.py
 ```
 
-Each example now exposes `main(smoke=False, show=True)`. CI executes all `examples/*.py` in smoke mode (`smoke=True`, `show=False`) to keep runtime short while still validating the training/import paths.
-
 ## DisscussionGroup & Related Projects
 
 <html>
