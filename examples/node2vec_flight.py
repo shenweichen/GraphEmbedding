@@ -1,88 +1,76 @@
-import numpy as np
-
-
-
-from ge.classify import read_node_label,Classifier
-
-from ge import Node2Vec
-
-from sklearn.linear_model import LogisticRegression
-
-
+from pathlib import Path
 
 import matplotlib.pyplot as plt
-
 import networkx as nx
-
+import numpy as np
+from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import TSNE
 
+from ge import Node2Vec
+from ge.classify import Classifier, read_node_label
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+FLIGHT_GRAPH_PATH = PROJECT_ROOT / "data" / "flight" / "brazil-airports.edgelist"
+FLIGHT_LABEL_PATH = PROJECT_ROOT / "data" / "flight" / "labels-brazil-airports.txt"
+SMOKE_GRAPH_PATH = PROJECT_ROOT / "tests" / "Wiki_edgelist.txt"
 
 
-def evaluate_embeddings(embeddings):
-
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
-
-    tr_frac = 0.8
-
-    print("Training classifier using {:.2f}% nodes...".format(
-
-        tr_frac * 100))
-
+def evaluate_embeddings(embeddings, label_path):
+    x_data, y_data = read_node_label(str(label_path), skip_head=True)
+    train_fraction = 0.8
+    print("Training classifier using {:.2f}% nodes...".format(train_fraction * 100))
     clf = Classifier(embeddings=embeddings, clf=LogisticRegression())
-
-    clf.split_train_evaluate(X, Y, tr_frac)
-
+    clf.split_train_evaluate(x_data, y_data, train_fraction)
 
 
+def plot_embeddings(embeddings, label_path, show=True):
+    x_data, y_data = read_node_label(str(label_path), skip_head=True)
 
-
-def plot_embeddings(embeddings,):
-
-    X, Y = read_node_label('../data/flight/labels-brazil-airports.txt',skip_head=True)
-
-
-
-    emb_list = []
-
-    for k in X:
-
-        emb_list.append(embeddings[k])
-
-    emb_list = np.array(emb_list)
-
-
-
-    model = TSNE(n_components=2)
-
-    node_pos = model.fit_transform(emb_list)
-
-
+    embedding_list = np.array([embeddings[node] for node in x_data])
+    node_pos = TSNE(n_components=2).fit_transform(embedding_list)
 
     color_idx = {}
+    for index, label in enumerate(y_data):
+        color_idx.setdefault(label[0], [])
+        color_idx[label[0]].append(index)
 
-    for i in range(len(X)):
-
-        color_idx.setdefault(Y[i][0], [])
-
-        color_idx[Y[i][0]].append(i)
-
-
-
-    for c, idx in color_idx.items():
-
-        plt.scatter(node_pos[idx, 0], node_pos[idx, 1], label=c)  # c=node_colors)
-
+    for label, indexes in color_idx.items():
+        plt.scatter(node_pos[indexes, 0], node_pos[indexes, 1], label=label)
     plt.legend()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
-    plt.show()
+
+def main(smoke=False, show=True):
+    graph_path = SMOKE_GRAPH_PATH if smoke else FLIGHT_GRAPH_PATH
+    graph = nx.read_edgelist(
+        str(graph_path),
+        create_using=nx.DiGraph(),
+        nodetype=None,
+        data=[("weight", int)],
+    )
+
+    model = Node2Vec(
+        graph,
+        walk_length=3 if smoke else 10,
+        num_walks=2 if smoke else 80,
+        workers=1,
+        p=0.25,
+        q=2,
+        use_rejection_sampling=False,
+    )
+    model.train(window_size=2 if smoke else 5, iter=1 if smoke else 3, workers=1)
+    embeddings = model.get_embeddings()
+    assert len(embeddings) > 0
+
+    if not smoke:
+        evaluate_embeddings(embeddings, FLIGHT_LABEL_PATH)
+        plot_embeddings(embeddings, FLIGHT_LABEL_PATH, show=show)
+
+    return embeddings
+
 
 if __name__ == "__main__":
-    G = nx.read_edgelist('../data/flight/brazil-airports.edgelist', create_using=nx.DiGraph(), nodetype=None,
-                         data=[('weight', int)])
-
-    model = Node2Vec(G, 10, 80, workers=1, p=0.25, q=2, use_rejection_sampling=0)
-    model.train()
-    embeddings = model.get_embeddings()
-
-    evaluate_embeddings(embeddings)
-    plot_embeddings(embeddings)
+    main()

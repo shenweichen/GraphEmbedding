@@ -21,14 +21,33 @@
 | Struc2Vec | [KDD 2017][struc2vec: Learning Node Representations from Structural Identity](https://arxiv.org/pdf/1704.03165.pdf)        | [【Graph Embedding】Struc2Vec：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56733145) |
 
 
+# CI Compatibility Matrix
+
+The CI matrix currently validates the following Python/TensorFlow combinations:
+
+| Python | TensorFlow | `TF_USE_LEGACY_KERAS` |
+| :----: | :--------: | :-------------------: |
+| 3.7    | 1.15.5     | 0 |
+| 3.10   | 2.10.0     | 0 |
+| 3.10   | 2.15.0     | 0 |
+| 3.11   | 2.15.0     | 0 |
+| 3.10   | 2.20.0     | 1 |
+| 3.11   | 2.20.0     | 1 |
+| 3.12   | 2.20.0     | 0 |
+
+For TensorFlow 2.16+ jobs that need legacy Keras behavior, CI installs `tf-keras` and sets `TF_USE_LEGACY_KERAS=1`.
+
 # How to run examples
-1. clone the repo and make sure you have installed `tensorflow` or `tensorflow-gpu` on your local machine. 
-2. run following commands
+
+1. Clone the repo and install dependencies.
+2. Run one example script.
+
 ```bash
-python setup.py install
-cd examples
-python deepwalk_wiki.py
+pip install -e .[cpu]
+python examples/deepwalk_wiki.py
 ```
+
+Each example now exposes `main(smoke=False, show=True)`. CI executes all `examples/*.py` in smoke mode (`smoke=True`, `show=False`) to keep runtime short while still validating the training/import paths.
 
 ## DisscussionGroup & Related Projects
 

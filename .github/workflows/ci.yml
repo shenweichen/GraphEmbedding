@@ -1,74 +1,84 @@
 name: CI
 
-on: 
+on:
   push:
-    path:
-      - 'ge/*'
-      - 'tests/*'
+    paths:
+      - "ge/**"
+      - "tests/**"
+      - "examples/**"
+      - ".github/workflows/**"
+      - "setup.py"
+      - "README.md"
   pull_request:
-    path:
-      - 'ge/*'
-      - 'tests/*'
-      
+    paths:
+      - "ge/**"
+      - "tests/**"
+      - "examples/**"
+      - ".github/workflows/**"
+      - "setup.py"
+      - "README.md"
+
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 180
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.6,3.7,3.8]
-        tf-version: [1.4.0,1.15.0,2.5.0,2.6.0,2.7.0,2.8.0,2.9.0]
-        
-        exclude:
-          - python-version: 3.7
-            tf-version: 1.4.0
-          - python-version: 3.7
-            tf-version: 1.15.0
-          - python-version: 3.8
-            tf-version: 1.4.0
-          - python-version: 3.8
-            tf-version: 1.14.0
-          - python-version: 3.8
-            tf-version: 1.15.0
-          - python-version: 3.6
-            tf-version: 2.7.0
-          - python-version: 3.6
-            tf-version: 2.8.0
-          - python-version: 3.6
-            tf-version: 2.9.0
-          - python-version: 3.9
-            tf-version: 1.4.0
-          - python-version: 3.9
-            tf-version: 1.15.0
-          - python-version: 3.9
-            tf-version: 2.2.0
-    steps:
-    
-    - uses: actions/checkout@v3
-    
-    - name: Setup python environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+        include:
+          - python-version: "3.7"
+            tf-version: "1.15.5"
+            use-legacy-keras: "0"
+          - python-version: "3.10"
+            tf-version: "2.10.0"
+            use-legacy-keras: "0"
+          - python-version: "3.10"
+            tf-version: "2.15.0"
+            use-legacy-keras: "0"
+          - python-version: "3.11"
+            tf-version: "2.15.0"
+            use-legacy-keras: "0"
+          - python-version: "3.10"
+            tf-version: "2.20.0"
+            use-legacy-keras: "1"
+          - python-version: "3.11"
+            tf-version: "2.20.0"
+            use-legacy-keras: "1"
+          - python-version: "3.12"
+            tf-version: "2.20.0"
+            use-legacy-keras: "0"
 
-    - name: Install dependencies
-      run: |
-        pip3 install -q tensorflow==${{ matrix.tf-version }}
-        pip install -q protobuf==3.19.0
-        pip install -q requests
-        pip install -e .
-    - name: Test with pytest
-      timeout-minutes: 180
-      run: |
-        pip install -q pytest
-        pip install -q pytest-cov
-        pip install -q python-coveralls
-        pytest --cov=ge --cov-report=xml
-    - name: Upload coverage to Codecov  
-      uses: codecov/codecov-action@v3.1.0
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
-        file: ./coverage.xml
-        flags: pytest
-        name: py${{ matrix.python-version }}-tf${{ matrix.tf-version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -q "tensorflow==${{ matrix.tf-version }}"
+          if [[ "${{ matrix.tf-version }}" == 1.* ]]; then
+            python -m pip install -q "protobuf==3.20.3"
+          fi
+          if [[ "${{ matrix.use-legacy-keras }}" == "1" ]]; then
+            python -m pip install -q "tf-keras~=2.20"
+          fi
+          python -m pip install -e ".[test]"
+
+      - name: Test with pytest
+        timeout-minutes: 180
+        env:
+          TF_USE_LEGACY_KERAS: ${{ matrix.use-legacy-keras }}
+        run: |
+          pytest --cov=ge --cov=examples --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: pytest
+          name: py${{ matrix.python-version }}-tf${{ matrix.tf-version }}

@@ -2,55 +2,40 @@ import setuptools
 
 
 with open("README.md", "r") as fh:
-
     long_description = fh.read()
 
 
 REQUIRED_PACKAGES = [
-    # 'tensorflow>=1.4.0',
-    'gensim>=4.0.0',
-    'networkx',
-    'joblib',
-    'fastdtw',
-    'tqdm',
-    'numpy',
-    'scikit-learn',
-    'pandas',
-    'matplotlib',
-    'deepctr'
+    "gensim>=4.0.0",
+    "networkx",
+    "joblib",
+    "fastdtw",
+    "tqdm",
+    "numpy",
+    "scikit-learn",
+    "pandas",
+    "matplotlib",
 ]
 
 
 setuptools.setup(
-
     name="ge",
-
     version="0.0.0",
-
     author="Weichen Shen",
-
     author_email="weichenswc@163.com",
-
     url="https://github.com/shenweichen/GraphEmbedding",
-
     packages=setuptools.find_packages(exclude=[]),
-
-    python_requires='>=3.5',  # 3.4.6
-
+    python_requires=">=3.7",
     install_requires=REQUIRED_PACKAGES,
-
     extras_require={
-
-        "cpu": ['tensorflow>=1.4.0,!=1.7.*,!=1.8.*'],
-
-        "gpu": ['tensorflow-gpu>=1.4.0,!=1.7.*,!=1.8.*'],
-
+        "cpu": ["tensorflow>=1.15.5"],
+        "gpu": ["tensorflow>=1.15.5"],
+        "test": [
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "python-coveralls>=2.9.3",
+        ],
     },
-
-    entry_points={
-
-    },
+    entry_points={},
     license="MIT license",
-
-
 )

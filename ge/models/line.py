@@ -21,17 +21,17 @@ import math
 import random
 
 import numpy as np
-from deepctr.layers.utils import reduce_sum
-from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.layers import Embedding, Input, Lambda
-from tensorflow.python.keras.models import Model
+import tensorflow as tf
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Embedding, Input, Lambda
+from tensorflow.keras.models import Model
 
 from ..alias import create_alias_table, alias_sample
 from ..utils import preprocess_nxgraph
 
 
 def line_loss(y_true, y_pred):
-    return -K.mean(K.log(K.sigmoid(y_true * y_pred)))
+    return -K.mean(tf.math.log_sigmoid(y_true * y_pred))
 
 
 def create_model(numNodes, embedding_size, order='second'):
@@ -48,10 +48,14 @@ def create_model(numNodes, embedding_size, order='second'):
     v_i_emb_second = second_emb(v_i)
     v_j_context_emb = context_emb(v_j)
 
-    first = Lambda(lambda x: reduce_sum(
-        x[0] * x[1], axis=-1, keep_dims=False), name='first_order')([v_i_emb, v_j_emb])
-    second = Lambda(lambda x: reduce_sum(
-        x[0] * x[1], axis=-1, keep_dims=False), name='second_order')([v_i_emb_second, v_j_context_emb])
+    first = Lambda(
+        lambda x: tf.reduce_sum(x[0] * x[1], axis=-1, keepdims=False),
+        name='first_order',
+    )([v_i_emb, v_j_emb])
+    second = Lambda(
+        lambda x: tf.reduce_sum(x[0] * x[1], axis=-1, keepdims=False),
+        name='second_order',
+    )([v_i_emb_second, v_j_context_emb])
 
     if order == 'first':
         output_list = [first]
@@ -205,8 +209,21 @@ class LINE:
 
     def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1, times=1):
         self.reset_training_config(batch_size, times)
-        hist = self.model.fit_generator(self.batch_it, epochs=epochs, initial_epoch=initial_epoch,
-                                        steps_per_epoch=self.steps_per_epoch,
-                                        verbose=verbose)
+        try:
+            hist = self.model.fit(
+                self.batch_it,
+                epochs=epochs,
+                initial_epoch=initial_epoch,
+                steps_per_epoch=self.steps_per_epoch,
+                verbose=verbose,
+            )
+        except TypeError:
+            hist = self.model.fit_generator(
+                self.batch_it,
+                epochs=epochs,
+                initial_epoch=initial_epoch,
+                steps_per_epoch=self.steps_per_epoch,
+                verbose=verbose,
+            )
 
         return hist

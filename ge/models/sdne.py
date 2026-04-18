@@ -22,39 +22,43 @@ import time
 import numpy as np
 import scipy.sparse as sp
 import tensorflow as tf
-from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.callbacks import History
-from tensorflow.python.keras.layers import Dense, Input
-from tensorflow.python.keras.models import Model
-from tensorflow.python.keras.regularizers import l1_l2
+from tensorflow.keras.callbacks import History
+from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.models import Model
+from tensorflow.keras.regularizers import l1_l2
 
 from ..utils import preprocess_nxgraph
 
 
 def l_2nd(beta):
     def loss_2nd(y_true, y_pred):
-        b_ = np.ones_like(y_true)
-        b_[y_true != 0] = beta
-        x = K.square((y_true - y_pred) * b_)
-        t = K.sum(x, axis=-1, )
-        return K.mean(t)
+        beta_weight = tf.cast(beta, y_true.dtype)
+        ones = tf.ones_like(y_true)
+        b_ = tf.where(tf.not_equal(y_true, 0), beta_weight * ones, ones)
+        x = tf.square((y_true - y_pred) * b_)
+        return tf.reduce_mean(tf.reduce_sum(x, axis=-1))
 
     return loss_2nd
 
 
 def l_1st(alpha):
     def loss_1st(y_true, y_pred):
-        L = y_true
-        Y = y_pred
-        batch_size = tf.to_float(K.shape(L)[0])
-        return alpha * 2 * tf.linalg.trace(tf.matmul(tf.matmul(Y, L, transpose_a=True), Y)) / batch_size
+        laplacian = y_true
+        embeddings = y_pred
+        batch_size = tf.cast(tf.shape(laplacian)[0], embeddings.dtype)
+        alpha_weight = tf.cast(alpha, embeddings.dtype)
+        return (
+            alpha_weight
+            * 2.0
+            * tf.linalg.trace(tf.matmul(tf.matmul(embeddings, laplacian, transpose_a=True), embeddings))
+            / batch_size
+        )
 
     return loss_1st
 
 
 def create_model(node_size, hidden_size=[256, 128], l1=1e-5, l2=1e-4):
     A = Input(shape=(node_size,))
-    L = Input(shape=(None,))
     fc = A
     for i in range(len(hidden_size)):
         if i == len(hidden_size) - 1:
@@ -69,7 +73,7 @@ def create_model(node_size, hidden_size=[256, 128], l1=1e-5, l2=1e-4):
                    kernel_regularizer=l1_l2(l1, l2))(fc)
 
     A_ = Dense(node_size, 'relu', name='2nd')(fc)
-    model = Model(inputs=[A, L], outputs=[A_, Y])
+    model = Model(inputs=A, outputs=[A_, Y])
     emb = Model(inputs=A, outputs=Y)
     return model, emb
 
@@ -90,7 +94,6 @@ class SDNE(object):
 
         self.A, self.L = _create_A_L(self.graph, self.node2idx)  # Adj Matrix,L Matrix
         self.reset_model()
-        self.inputs = [self.A, self.L]
         self._embeddings = {}
 
     def reset_model(self, opt='adam'):
@@ -101,14 +104,22 @@ class SDNE(object):
         self.get_embeddings()
 
     def train(self, batch_size=1024, epochs=1, initial_epoch=0, verbose=1):
+        adjacency = self.A.toarray().astype(np.float32)
+        laplacian = self.L.toarray().astype(np.float32)
         if batch_size >= self.node_size:
             if batch_size > self.node_size:
                 print('batch_size({0}) > node_size({1}),set batch_size = {1}'.format(
                     batch_size, self.node_size))
                 batch_size = self.node_size
-            return self.model.fit([self.A.todense(), self.L.todense()], [self.A.todense(), self.L.todense()],
-                                  batch_size=batch_size, epochs=epochs, initial_epoch=initial_epoch, verbose=verbose,
-                                  shuffle=False, )
+            return self.model.fit(
+                adjacency,
+                [adjacency, laplacian],
+                batch_size=batch_size,
+                epochs=epochs,
+                initial_epoch=initial_epoch,
+                verbose=verbose,
+                shuffle=False,
+            )
         else:
             steps_per_epoch = (self.node_size - 1) // batch_size + 1
             hist = History()
@@ -120,10 +131,9 @@ class SDNE(object):
                 for i in range(steps_per_epoch):
                     index = np.arange(
                         i * batch_size, min((i + 1) * batch_size, self.node_size))
-                    A_train = self.A[index, :].todense()
-                    L_mat_train = self.L[index][:, index].todense()
-                    inp = [A_train, L_mat_train]
-                    batch_losses = self.model.train_on_batch(inp, inp)
+                    A_train = adjacency[index, :]
+                    L_mat_train = laplacian[index][:, index]
+                    batch_losses = np.asarray(self.model.train_on_batch(A_train, [A_train, L_mat_train]))
                     losses += batch_losses
                 losses = losses / steps_per_epoch
 
@@ -139,11 +149,14 @@ class SDNE(object):
             return hist
 
     def evaluate(self, ):
-        return self.model.evaluate(x=self.inputs, y=self.inputs, batch_size=self.node_size)
+        adjacency = self.A.toarray().astype(np.float32)
+        laplacian = self.L.toarray().astype(np.float32)
+        return self.model.evaluate(x=adjacency, y=[adjacency, laplacian], batch_size=self.node_size)
 
     def get_embeddings(self):
         self._embeddings = {}
-        embeddings = self.emb_model.predict(self.A.todense(), batch_size=self.node_size)
+        adjacency = self.A.toarray().astype(np.float32)
+        embeddings = self.emb_model.predict(adjacency, batch_size=self.node_size, verbose=0)
         look_back = self.idx2node
         for i, embedding in enumerate(embeddings):
             self._embeddings[look_back[i]] = embedding
