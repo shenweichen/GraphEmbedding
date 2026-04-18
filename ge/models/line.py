@@ -166,18 +166,20 @@ class LINE:
                     cur_t = edges[shuffle_indices[i]][1]
                     h.append(cur_h)
                     t.append(cur_t)
-                sign = np.ones(len(h))
+                sign = np.ones(len(h), dtype=np.float32)
             else:
-                sign = np.ones(len(h)) * -1
+                sign = np.ones(len(h), dtype=np.float32) * -1
                 t = []
                 for i in range(len(h)):
                     t.append(alias_sample(
                         self.node_accept, self.node_alias))
 
+            heads = np.asarray(h, dtype=np.int32)
+            tails = np.asarray(t, dtype=np.int32)
             if self.order == 'all':
-                yield ([np.array(h), np.array(t)], [sign, sign])
+                yield ((heads, tails), (sign, sign))
             else:
-                yield ([np.array(h), np.array(t)], [sign])
+                yield ((heads, tails), (sign,))
             mod += 1
             mod %= mod_size
             if mod == 0:
@@ -218,6 +220,8 @@ class LINE:
                 verbose=verbose,
             )
         except TypeError:
+            if not hasattr(self.model, "fit_generator"):
+                raise
             hist = self.model.fit_generator(
                 self.batch_it,
                 epochs=epochs,

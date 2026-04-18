@@ -59,6 +59,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          if [[ "${{ matrix.tf-version }}" == "2.10.0" ]]; then
+            python -m pip install -q "numpy<2"
+          fi
           python -m pip install -q "tensorflow==${{ matrix.tf-version }}"
           if [[ "${{ matrix.tf-version }}" == 1.* ]]; then
             python -m pip install -q "protobuf==3.20.3"
@@ -67,6 +70,9 @@ jobs:
             python -m pip install -q "tf-keras~=2.20"
           fi
           python -m pip install -e ".[test]"
+          if [[ "${{ matrix.tf-version }}" == "2.10.0" ]]; then
+            python -m pip install -q "numpy<2"
+          fi
 
       - name: Test with pytest
         timeout-minutes: 180
