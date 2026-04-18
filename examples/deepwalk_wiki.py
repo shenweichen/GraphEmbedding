@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -6,10 +7,13 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import TSNE
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from ge import DeepWalk
 from ge.classify import Classifier, read_node_label
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
 WIKI_GRAPH_PATH = PROJECT_ROOT / "data" / "wiki" / "Wiki_edgelist.txt"
 WIKI_LABEL_PATH = PROJECT_ROOT / "data" / "wiki" / "wiki_labels.txt"
 SMOKE_GRAPH_PATH = PROJECT_ROOT / "tests" / "Wiki_edgelist.txt"

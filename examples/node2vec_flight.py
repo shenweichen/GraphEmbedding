@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -6,10 +7,13 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import TSNE
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from ge import Node2Vec
 from ge.classify import Classifier, read_node_label
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FLIGHT_GRAPH_PATH = PROJECT_ROOT / "data" / "flight" / "brazil-airports.edgelist"
 FLIGHT_LABEL_PATH = PROJECT_ROOT / "data" / "flight" / "labels-brazil-airports.txt"
 SMOKE_GRAPH_PATH = PROJECT_ROOT / "tests" / "Wiki_edgelist.txt"
