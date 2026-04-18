@@ -123,6 +123,7 @@ class SDNE(object):
         else:
             steps_per_epoch = (self.node_size - 1) // batch_size + 1
             hist = History()
+            hist.set_model(self.model)
             hist.on_train_begin()
             logs = {}
             for epoch in range(initial_epoch, epochs):
