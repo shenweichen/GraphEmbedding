@@ -34,6 +34,7 @@ The CI matrix currently validates the following Python/TensorFlow combinations:
 | 3.10   | 2.20.0     | 1 |
 | 3.11   | 2.20.0     | 1 |
 | 3.12   | 2.20.0     | 0 |
+| 3.13   | 2.20.0     | 0 |
 
 For TensorFlow 2.16+ jobs that need legacy Keras behavior, CI installs `tf-keras` and sets `TF_USE_LEGACY_KERAS=1`.
 

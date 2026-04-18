@@ -47,6 +47,9 @@ jobs:
           - python-version: "3.12"
             tf-version: "2.20.0"
             use-legacy-keras: "0"
+          - python-version: "3.13"
+            tf-version: "2.20.0"
+            use-legacy-keras: "0"
 
     steps:
       - uses: actions/checkout@v4
