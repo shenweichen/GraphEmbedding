@@ -20,7 +20,7 @@ REQUIRED_PACKAGES = [
 
 setuptools.setup(
     name="ge",
-    version="0.0.0",
+    version="0.1.0",
     author="Weichen Shen",
     author_email="weichenswc@163.com",
     url="https://github.com/shenweichen/GraphEmbedding",
@@ -28,8 +28,7 @@ setuptools.setup(
     python_requires=">=3.7",
     install_requires=REQUIRED_PACKAGES,
     extras_require={
-        "cpu": ["tensorflow>=1.15.5"],
-        "gpu": ["tensorflow>=1.15.5"],
+        "tf": ["tensorflow>=1.15.5"],
         "test": [
             "pytest>=7.0.0",
             "pytest-cov>=4.0.0",

@@ -21,22 +21,7 @@
 | Struc2Vec | [KDD 2017][struc2vec: Learning Node Representations from Structural Identity](https://arxiv.org/pdf/1704.03165.pdf)        | [【Graph Embedding】Struc2Vec：算法原理，实现和应用](https://zhuanlan.zhihu.com/p/56733145) |
 
 
-# CI Compatibility Matrix
 
-The CI matrix currently validates the following Python/TensorFlow combinations:
-
-| Python | TensorFlow | `TF_USE_LEGACY_KERAS` |
-| :----: | :--------: | :-------------------: |
-| 3.7    | 1.15.5     | 0 |
-| 3.10   | 2.10.0     | 0 |
-| 3.10   | 2.15.0     | 0 |
-| 3.11   | 2.15.0     | 0 |
-| 3.10   | 2.20.0     | 1 |
-| 3.11   | 2.20.0     | 1 |
-| 3.12   | 2.20.0     | 0 |
-| 3.13   | 2.20.0     | 0 |
-
-For TensorFlow 2.16+ jobs that need legacy Keras behavior, CI installs `tf-keras` and sets `TF_USE_LEGACY_KERAS=1`.
 
 # How to run examples
 
@@ -44,7 +29,7 @@ For TensorFlow 2.16+ jobs that need legacy Keras behavior, CI installs `tf-keras
 2. Run one example script.
 
 ```bash
-pip install -e .[cpu]
+pip install -e .[tf]
 python examples/deepwalk_wiki.py
 ```
 
