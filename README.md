@@ -2,7 +2,7 @@
 
 [![GitHub Issues](https://img.shields.io/github/issues/shenweichen/graphembedding.svg
 )](https://github.com/shenweichen/graphembedding/issues)
-![CI status](https://github.com/shenweichen/graphembedding/workflows/CI/badge.svg)
+[![CI status](https://github.com/shenweichen/graphembedding/actions/workflows/ci.yml/badge.svg)](https://github.com/shenweichen/graphembedding/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/shenweichen/graphembedding/branch/master/graph/badge.svg)](https://codecov.io/gh/shenweichen/graphembedding)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c46407f5931f40048e28860dccf7dabc)](https://www.codacy.com/gh/shenweichen/GraphEmbedding/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=shenweichen/GraphEmbedding&amp;utm_campaign=Badge_Grade)
 [![Disscussion](https://img.shields.io/badge/chat-wechat-brightgreen?style=flat)](./README.md#disscussiongroup--related-projects)
