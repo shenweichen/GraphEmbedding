@@ -131,11 +131,10 @@ class LINE:
         self.node_accept, self.node_alias = create_alias_table(norm_prob)
 
         # create sampling table for edge
-        numEdges = self.graph.number_of_edges()
         total_sum = sum([self.graph[edge[0]][edge[1]].get('weight', 1.0)
                          for edge in self.graph.edges()])
-        norm_prob = [self.graph[edge[0]][edge[1]].get('weight', 1.0) *
-                     numEdges / total_sum for edge in self.graph.edges()]
+        norm_prob = [self.graph[edge[0]][edge[1]].get('weight', 1.0) /
+                     total_sum for edge in self.graph.edges()]
 
         self.edge_accept, self.edge_alias = create_alias_table(norm_prob)
 
